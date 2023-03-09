@@ -37,7 +37,7 @@ app.get('/api/:date', function(req, res) {
 
   // check the date format in YYYY/MM/DD
   if (validator.isDate(date)) {
-    const unix = Date.parse(date);
+    const unix = Number(Date.parse(date));
     const utc = new Date(date).toUTCString();
 
     res.json({
@@ -46,8 +46,8 @@ app.get('/api/:date', function(req, res) {
     });
 
   // check the date format in UNIX
-  } else if (Date(date)) {
-    const unix = date;
+  } else if ( new Date(Number(date)) ) {
+    const unix = Number(date);
     const utc = new Date(Number(date)).toUTCString();
 
     res.json({
