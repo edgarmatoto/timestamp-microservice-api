@@ -4,8 +4,6 @@
 // init project
 var express = require('express');
 var app = express();
-const validator = require('validator');
-
 
 // date endpoint...
 var bodyParser = require('body-parser');
@@ -35,10 +33,11 @@ app.get('/api/:date', function(req, res) {
   // get path parameter
   const { date } = req.params;
 
-  // check the date format in YYYY/MM/DD
-  if (validator.isDate(date)) {
-    const unix = Number(Date.parse(date));
-    const utc = new Date(date).toUTCString();
+  // check the date format in YYYY/MM/DD or YYYY-MM-DD format
+  const dateObj = new Date(date);
+  if (!isNaN(dateObj.getTime())) {
+    const unix = Number(dateObj.getTime());
+    const utc = dateObj.toUTCString();
 
     res.json({
       unix: unix,
@@ -46,7 +45,7 @@ app.get('/api/:date', function(req, res) {
     });
 
   // check the date format in UNIX
-  } else if ( new Date(Number(date)) ) {
+  } else if ( !isNaN(Number(date)) && new Date(Number(date)).getTime() > 0 ) {
     const unix = Number(date);
     const utc = new Date(Number(date)).toUTCString();
 
@@ -61,6 +60,8 @@ app.get('/api/:date', function(req, res) {
     });
   }
 });
+
+
 
 app.get('/api', function(req, res) {
   const unix = Date.now();
